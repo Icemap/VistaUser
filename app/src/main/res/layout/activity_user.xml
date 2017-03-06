@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_user"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.wqz.vistauser.UserActivity">
+
+    <com.wqz.view.TitleBar
+        android:id="@+id/user_title_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <TextView
+        android:id="@+id/tv_user_age"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textSize="18sp"
+        android:layout_below="@+id/user_title_bar"
+        android:hint="您的年龄:"
+        android:layout_alignParentLeft="true"
+        android:layout_margin="5dp"/>
+
+    <Spinner
+        android:id="@+id/sp_user_age"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/tv_user_age"
+        android:layout_alignTop="@+id/tv_user_age"
+        />
+
+    <TextView
+        android:id="@+id/tv_user_income"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textSize="18sp"
+        android:layout_below="@+id/tv_user_age"
+        android:hint="您的收入:"
+        android:layout_margin="5dp"/>
+
+    <Spinner
+        android:id="@+id/sp_user_income"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/tv_user_income"
+        android:layout_alignTop="@+id/tv_user_income"
+        />
+
+    <EditText
+        android:id="@+id/et_user_home_address"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tv_user_income"
+        android:hint="您家庭的粗略住址"
+        android:layout_margin="5dp"/>
+
+    <EditText
+        android:id="@+id/et_user_work_address"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/et_user_home_address"
+        android:hint="您工作地点的粗略住址"
+        android:layout_margin="5dp"/>
+
+    <Button
+        android:id="@+id/btn_user_ok"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:hint="确认"
+        android:layout_margin="5dp"/>
+</RelativeLayout>

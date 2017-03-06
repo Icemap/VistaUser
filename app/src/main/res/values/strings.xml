@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">VistaUser</string>
+    <string name="title_activity_login">Sign in</string>
+
+    <string name="username_hint">请输入账号</string>
+    <string name="password_hint">请输入密码</string>
+    <string name="nickname_hint">请输入昵称</string>
+    <string name="register">前往注册</string>
+    <string name="login">登录</string>
+
+</resources>
