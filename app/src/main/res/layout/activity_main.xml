@@ -7,8 +7,14 @@
     android:layout_height="match_parent"
     tools:context="com.wqz.vistauser.MainActivity">
 
+    <com.wqz.view.TitleBar
+        android:id="@+id/main_title_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
     <LinearLayout
         android:id="@+id/ll_pano"
+        android:layout_below="@+id/main_title_bar"
         android:layout_toLeftOf="@+id/ll_seek"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -32,12 +38,13 @@
         android:id="@+id/ll_seek"
         android:layout_width="50dp"
         android:layout_height="match_parent"
+        android:layout_below="@+id/main_title_bar"
         android:layout_alignParentRight="true">
 
         <com.h6ah4i.android.widget.verticalseekbar.VerticalSeekBarWrapper
             android:id="@+id/seekbar_contains"
             android:layout_width="wrap_content"
-            android:layout_height="300dp"
+            android:layout_height="280dp"
             android:layout_centerInParent="true"
             >
             <com.h6ah4i.android.widget.verticalseekbar.VerticalSeekBar

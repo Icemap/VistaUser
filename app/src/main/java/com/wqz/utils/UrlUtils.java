@@ -6,7 +6,7 @@ package com.wqz.utils;
 
 public class UrlUtils
 {
-    public static String BASE_URL = "http://192.168.1.115:8080/vista";
+    public static String BASE_URL = "http://wangqizhi.top:8080/vista";
 
     //manager
     public static String BASE_MANAGER = BASE_URL + "/manager";

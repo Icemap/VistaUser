@@ -2,6 +2,7 @@ package com.wqz.vistauser;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.webkit.URLUtil;
@@ -17,7 +18,10 @@ import com.google.gson.Gson;
 import com.wqz.base.BaseActivity;
 import com.wqz.base.BaseApplication;
 import com.wqz.pojo.Vista;
+import com.wqz.utils.ScreenUtils;
+import com.wqz.utils.StatusBarUtils;
 import com.wqz.utils.UrlUtils;
+import com.wqz.view.TitleBar;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
@@ -30,6 +34,7 @@ import okhttp3.Call;
 
 public class MainActivity extends BaseActivity
 {
+    TitleBar titleBar;
     SeekBar seekBar;
     WebView pano1, pano2;
     TextView tvPano1, tvPano2;
@@ -37,6 +42,7 @@ public class MainActivity extends BaseActivity
 
     List<Map<String,String>> rlt;
     List<String> urls;
+    List<String> questions;
     Integer indexPano1;
     Integer indexPano2;
     Vista[] vl;
@@ -59,9 +65,21 @@ public class MainActivity extends BaseActivity
         tvPano2 = (TextView)findViewById(R.id.tv_pano2);
         btnOK = (Button)findViewById(R.id.btn_ok);
         btnOK.setOnClickListener(btnOkListener);
+        titleBar = (TitleBar)findViewById(R.id.main_title_bar);
 
+        titleBarInit();
         webViewInit();
         seekBarInit();
+    }
+
+    void titleBarInit()
+    {
+        titleBar.setBackgroundColor(MainActivity.this.getResources().getColor(R.color.colorTitleBar));
+        StatusBarUtils.setWindowStatusBarColor(MainActivity.this, R.color.colorTitleBar);
+        titleBar.setImmersive(false);
+        titleBar.setTitle("");
+        titleBar.setTitleColor(Color.WHITE);
+        titleBar.setHeight(ScreenUtils.getScreenHeight(MainActivity.this) / 12);
     }
 
     void webViewInit()
@@ -157,10 +175,12 @@ public class MainActivity extends BaseActivity
 
 
                         urls = new ArrayList<>();
+                        questions = new ArrayList<>();
                         for (Vista item : vl)
                         {
                             urls.add(UrlUtils.HTML_VISTA + "?lon=" +
                                     item.getLon() + "&lat=" + item.getLat());
+                            questions.add(item.getUrl());
                         }
 
                         resetWebViewUrl();
@@ -193,6 +213,7 @@ public class MainActivity extends BaseActivity
     {
         pano1.loadUrl(urls.get(indexPano1));
         pano2.loadUrl(urls.get(indexPano2));
+        titleBar.setTitle(questions.get(indexPano1));
     }
 
     View.OnClickListener btnOkListener = new View.OnClickListener() {

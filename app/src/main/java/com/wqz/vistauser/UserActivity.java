@@ -7,12 +7,15 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.wqz.base.BaseActivity;
+import com.wqz.pojo.UserHold;
 import com.wqz.utils.ScreenUtils;
 import com.wqz.utils.StatusBarUtils;
 import com.wqz.utils.UrlUtils;
@@ -25,13 +28,15 @@ import okhttp3.Call;
 public class UserActivity extends BaseActivity
 {
     TitleBar titleBar;
-    EditText etHomeAddress,etWorkAddress;
+    EditText etHomeAddress,etWorkAddress,etProfession;
     Button btnOK;
     Spinner spAge,spIncome;
+    RadioButton rbMan,rbWoman;
+
     String[] ageArray= {"20岁以下","21~25岁" ,"26~30岁","31~35岁","36~40岁","41~45岁",
             "46~50岁","51~55岁","55岁以上"};
     String[] incomeArray= {"4k以下","4k~5k" ,"5k~6k","6k~7k","7k~8k","8k~9k",
-            "9k~10k","10k以上"};
+            "9k~10k","10k以上","不愿透露"};
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -49,9 +54,12 @@ public class UserActivity extends BaseActivity
         setSpinner(spIncome,incomeArray);
         etHomeAddress = (EditText)findViewById(R.id.et_user_home_address);
         etWorkAddress = (EditText)findViewById(R.id.et_user_work_address);
+        etProfession = (EditText)findViewById(R.id.et_user_profession);
         titleBar = (TitleBar)findViewById(R.id.user_title_bar);
         btnOK = (Button)findViewById(R.id.btn_user_ok);
         btnOK.setOnClickListener(onClickListener);
+        rbMan = (RadioButton)findViewById(R.id.rb_user_man);
+        rbWoman = (RadioButton)findViewById(R.id.rb_user_woman);
     }
 
     void setSpinner(Spinner target,String[] itemArray)
@@ -66,6 +74,10 @@ public class UserActivity extends BaseActivity
     View.OnClickListener onClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
+            UserHold hold = new UserHold();
+            hold.sex = rbMan.isChecked() ? "男" : "女";
+            hold.profession = etProfession.getText().toString();
+
             OkHttpUtils.get().url(UrlUtils.USER_CREATE)//
                     .addParams("age",ageArray[(int)spAge.getSelectedItemId()])
                     .addParams("income",incomeArray[(int)spIncome.getSelectedItemId()])
@@ -73,6 +85,7 @@ public class UserActivity extends BaseActivity
                     .addParams("workAddress",etWorkAddress.getText().toString())
                     .addParams("projId",getBaseApplication().getProj().getId() + "")
                     .addParams("vistaMatrix",getBaseApplication().getRlt())
+                    .addParams("hold",new Gson().toJson(hold))
                     .build()//
                     .execute(new StringCallback() {
                         @Override
