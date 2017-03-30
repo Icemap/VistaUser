@@ -147,7 +147,7 @@ public class SelectProjActivity extends BaseActivity
             SelectProjActivity.this.getBaseApplication().setProj(
                     projArray[position]);
             SelectProjActivity.this.startActivity(new Intent(
-                    SelectProjActivity.this, MainActivity.class));
+                    SelectProjActivity.this, UserActivity.class));
         }
     };
 }

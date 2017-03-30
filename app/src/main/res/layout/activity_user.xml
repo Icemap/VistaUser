@@ -75,11 +75,29 @@
         android:layout_alignTop="@+id/tv_user_income"
         />
 
+    <TextView
+        android:id="@+id/tv_user_live"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textSize="18sp"
+        android:layout_below="@+id/tv_user_income"
+        android:hint="您在此地的居住时间:"
+        android:layout_margin="5dp"/>
+
+    <Spinner
+        android:id="@+id/sp_user_live"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/tv_user_live"
+        android:layout_alignTop="@+id/tv_user_live"
+        />
+
     <EditText
         android:id="@+id/et_user_profession"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/tv_user_income"
+        android:layout_below="@+id/tv_user_live"
         android:hint="您的工作"
         android:layout_margin="5dp"/>
 
@@ -88,7 +106,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/et_user_profession"
-        android:hint="您家庭的粗略住址"
+        android:hint="您家庭的住址"
         android:layout_margin="5dp"/>
 
     <EditText
@@ -96,7 +114,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/et_user_home_address"
-        android:hint="您工作地点的粗略住址"
+        android:hint="您工作地点的地址"
         android:layout_margin="5dp"/>
 
     <Button

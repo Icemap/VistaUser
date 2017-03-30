@@ -47,6 +47,9 @@ public class MainActivity extends BaseActivity
     Integer indexPano2;
     Vista[] vl;
 
+    Integer max = 8,center = 4;
+    TitleBar.TextAction action;
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -80,6 +83,14 @@ public class MainActivity extends BaseActivity
         titleBar.setTitle("");
         titleBar.setTitleColor(Color.WHITE);
         titleBar.setHeight(ScreenUtils.getScreenHeight(MainActivity.this) / 12);
+        titleBar.setActionTextColor(Color.WHITE);
+        action =  new TitleBar.TextAction("结束项目") {
+            @Override
+            public void performAction(View view) {
+                endProj();
+            }
+        };
+        titleBar.addAction(action);
     }
 
     void webViewInit()
@@ -117,8 +128,8 @@ public class MainActivity extends BaseActivity
 
     void seekBarInit()
     {
-        seekBar.setMax(98);
-        seekBar.setProgress(49);
+        seekBar.setMax(max);
+        seekBar.setProgress(center);
         seekBar.setOnSeekBarChangeListener(seekBarChangeListener);
     }
 
@@ -127,7 +138,7 @@ public class MainActivity extends BaseActivity
         @Override
         public void onProgressChanged(SeekBar seekBar, int progress, boolean isUser)
         {
-            tvPano1.setText((98 - progress + 1) + "");
+            tvPano1.setText((max - progress + 1) + "");
             tvPano2.setText((progress + 1) + "");
         }
 
@@ -191,20 +202,28 @@ public class MainActivity extends BaseActivity
     void dataLogic()
     {
         insertRlt();
+//        12.13,14,23,24,34
+//        if(urls.size() - 2 == indexPano1)
+//        {
+//            endProj();
+//        }
+//        else if(indexPano2 == urls.size() - 1)
+//        {
+//            indexPano2 = ++indexPano1 + 1;
+//        }
+//        else
+//        {
+//            indexPano2++;
+//        }
 
-        if(urls.size() - 2 == indexPano1)
+        //12,23,34,45
+        if(indexPano2 == urls.size() - 1)
         {
-            //结束
-            getBaseApplication().setRlt(new Gson().toJson(rlt));
-            startActivity(new Intent(MainActivity.this, UserActivity.class));
-            finish();
-        }
-        else if(indexPano2 == urls.size() - 1)
-        {
-            indexPano2 = ++indexPano1 + 1;
+            endProj();
         }
         else
         {
+            indexPano1++;
             indexPano2++;
         }
     }
@@ -222,15 +241,75 @@ public class MainActivity extends BaseActivity
             dataLogic();
             resetWebViewUrl();
             //SeekBar Reset
-            seekBar.setProgress(49);
+            seekBar.setProgress(center);
         }
     };
 
     void insertRlt()
     {
-        Map<String,String> map = new HashMap<>();
-        map.put("index", vl[indexPano1].getId() + ":" + vl[indexPano2].getId());
-        map.put("value", tvPano1.getText().toString() + ":" + tvPano2.getText().toString());
-        rlt.add(map);
+            Map<String,String> map = new HashMap<>();
+            map.put("index", vl[indexPano1].getId() + ":" + vl[indexPano2].getId());
+            map.put("value", tvPano1.getText().toString() + ":" + tvPano2.getText().toString());
+            rlt.add(map);
+    }
+
+    void endProj()
+    {
+        if(rlt.isEmpty())
+        {
+            Toast.makeText(MainActivity.this,"在一个答案都没选的时候是不能结束的=。=",Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        BaseApplication app = MainActivity.this.getBaseApplication();
+        OkHttpUtils.get().url(UrlUtils.USER_CREATE)//
+                    .addParams("age",app.age)
+                    .addParams("income",app.income)
+                    .addParams("homeAddress",app.homeAddress)
+                    .addParams("workAddress",app.workAddress)
+                    .addParams("projId",app.getProj().getId() + "")
+                    .addParams("vistaMatrix",new Gson().toJson(rlt))
+                    .addParams("hold",app.hold)
+                    .build()//
+                    .execute(new StringCallback() {
+                        @Override
+                        public void onError(Call call, Exception e, int id)
+                        {
+                            Toast.makeText(MainActivity.this,"提交失败",Toast.LENGTH_SHORT).show();
+                            btnOK.setVisibility(View.VISIBLE);
+                            titleBar.removeAction(action);
+                            action =  new TitleBar.TextAction("重新提交") {
+                                @Override
+                                public void performAction(View view) {
+                                    endProj();
+                                }
+                            };
+                            titleBar.addAction(action);
+                        }
+                        @Override
+                        public void onResponse(String response, int id) {
+                            Boolean rlt = new Gson().fromJson(response,Boolean.class);
+                            if(rlt)
+                            {
+                                Toast.makeText(MainActivity.this,"提交成功",Toast.LENGTH_SHORT).show();
+                                //
+                                MainActivity.this.startActivity(new Intent(MainActivity.this,EndActivity.class));
+                                MainActivity.this.finish();
+                            }
+                            else
+                            {
+                                Toast.makeText(MainActivity.this,"提交失败",Toast.LENGTH_SHORT).show();
+                                btnOK.setVisibility(View.VISIBLE);
+                                titleBar.removeAction(action);
+                                action =  new TitleBar.TextAction("重新提交") {
+                                    @Override
+                                    public void performAction(View view) {
+                                        endProj();
+                                    }
+                                };
+                                titleBar.addAction(action);
+                            }
+                        }
+                    });
     }
 }

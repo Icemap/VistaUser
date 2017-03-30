@@ -60,7 +60,7 @@ public class EndActivity extends BaseActivity
             switch (view.getId())
             {
                 case R.id.btn_to_main:
-                    startActivity(new Intent(EndActivity.this,MainActivity.class));
+                    startActivity(new Intent(EndActivity.this,UserActivity.class));
                     break;
                 case R.id.btn_to_select:
                     startActivity(new Intent(EndActivity.this,SelectProjActivity.class));

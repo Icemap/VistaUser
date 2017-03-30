@@ -34,7 +34,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="VistaUser v0.1  Author:王琦智"
+        android:text="VistaUser v0.3  Author:王琦智"
         android:layout_below="@+id/tv_thanks"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="10dp"

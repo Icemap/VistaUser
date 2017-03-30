@@ -61,7 +61,7 @@
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_above="@+id/seekbar_contains"
-            android:text="50"/>
+            android:text="5"/>
 
         <TextView
             android:id="@+id/tv_pano2"
@@ -69,7 +69,7 @@
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_below="@+id/seekbar_contains"
-            android:text="50"/>
+            android:text="5"/>
 
         <Button
             android:id="@+id/btn_ok"

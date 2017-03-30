@@ -8,4 +8,5 @@ public class UserHold
 {
     public String profession = "";
     public String sex = "";
+    public String live = "";
 }
