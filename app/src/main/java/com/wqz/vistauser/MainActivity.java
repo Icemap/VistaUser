@@ -18,6 +18,7 @@ import com.google.gson.Gson;
 import com.wqz.base.BaseActivity;
 import com.wqz.base.BaseApplication;
 import com.wqz.pojo.Vista;
+import com.wqz.utils.RandomUtils;
 import com.wqz.utils.ScreenUtils;
 import com.wqz.utils.StatusBarUtils;
 import com.wqz.utils.UrlUtils;
@@ -39,16 +40,18 @@ public class MainActivity extends BaseActivity
     WebView pano1, pano2;
     TextView tvPano1, tvPano2;
     Button btnOK;
+    TitleBar.Action action;
 
     List<Map<String,String>> rlt;
     List<String> urls;
     List<String> questions;
-    Integer indexPano1;
-    Integer indexPano2;
+    Integer indexPano;
     Vista[] vl;
 
     Integer max = 8,center = 4;
-    TitleBar.TextAction action;
+
+    List<Integer> indexPano1List,indexPano2List;
+    List<Integer> panoIdList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -84,13 +87,6 @@ public class MainActivity extends BaseActivity
         titleBar.setTitleColor(Color.WHITE);
         titleBar.setHeight(ScreenUtils.getScreenHeight(MainActivity.this) / 12);
         titleBar.setActionTextColor(Color.WHITE);
-        action =  new TitleBar.TextAction("结束项目") {
-            @Override
-            public void performAction(View view) {
-                endProj();
-            }
-        };
-        titleBar.addAction(action);
     }
 
     void webViewInit()
@@ -155,8 +151,7 @@ public class MainActivity extends BaseActivity
 
     void initData()
     {
-        indexPano1 = 0;
-        indexPano2 = 1;
+        indexPano = 0;
 
         rlt = new ArrayList<>();
 
@@ -187,52 +182,59 @@ public class MainActivity extends BaseActivity
 
                         urls = new ArrayList<>();
                         questions = new ArrayList<>();
+                        panoIdList = new ArrayList<>();
+
                         for (Vista item : vl)
                         {
                             urls.add(UrlUtils.HTML_VISTA + "?lon=" +
                                     item.getLon() + "&lat=" + item.getLat());
                             questions.add(item.getUrl());
+                            panoIdList.add(item.getId());
                         }
+
+                        indexPano1List = new ArrayList<>();
+                        indexPano2List = new ArrayList<>();
+                        for(int i = 0;i < panoIdList.size() - 1;i++)
+                        {
+                            for(int j = i + 1;j < panoIdList.size();j++)
+                            {
+                                indexPano1List.add(i);
+                                indexPano2List.add(j);
+                            }
+                        }
+                        //
+                        RandomUtils.randomTwoList(indexPano1List,indexPano2List);
 
                         resetWebViewUrl();
                     }
                 });
     }
 
+    boolean lastIsAdd = false;
     void dataLogic()
     {
-        insertRlt();
-//        12.13,14,23,24,34
-//        if(urls.size() - 2 == indexPano1)
-//        {
-//            endProj();
-//        }
-//        else if(indexPano2 == urls.size() - 1)
-//        {
-//            indexPano2 = ++indexPano1 + 1;
-//        }
-//        else
-//        {
-//            indexPano2++;
-//        }
-
-        //12,23,34,45
-        if(indexPano2 == urls.size() - 1)
+        if(indexPano == indexPano1List.size() - 1)
         {
+            if(!lastIsAdd)
+            {
+                insertRlt();
+                lastIsAdd = true;
+            }
             endProj();
         }
         else
         {
-            indexPano1++;
-            indexPano2++;
+            insertRlt();
+            indexPano++;
         }
     }
 
     void resetWebViewUrl()
     {
-        pano1.loadUrl(urls.get(indexPano1));
-        pano2.loadUrl(urls.get(indexPano2));
-        titleBar.setTitle(questions.get(indexPano1));
+        Toast.makeText(MainActivity.this,indexPano1List.get(indexPano) + ":" + indexPano2List.get(indexPano),Toast.LENGTH_SHORT).show();
+        pano1.loadUrl(urls.get(indexPano1List.get(indexPano)));
+        pano2.loadUrl(urls.get(indexPano2List.get(indexPano)));
+        titleBar.setTitle(questions.get(indexPano1List.get(indexPano)));
     }
 
     View.OnClickListener btnOkListener = new View.OnClickListener() {
@@ -248,18 +250,18 @@ public class MainActivity extends BaseActivity
     void insertRlt()
     {
             Map<String,String> map = new HashMap<>();
-            map.put("index", vl[indexPano1].getId() + ":" + vl[indexPano2].getId());
+            map.put("index", vl[indexPano1List.get(indexPano)].getId() + ":" + vl[indexPano2List.get(indexPano)].getId());
             map.put("value", tvPano1.getText().toString() + ":" + tvPano2.getText().toString());
             rlt.add(map);
     }
 
     void endProj()
     {
-        if(rlt.isEmpty())
-        {
-            Toast.makeText(MainActivity.this,"在一个答案都没选的时候是不能结束的=。=",Toast.LENGTH_SHORT).show();
-            return;
-        }
+//        if(rlt.isEmpty())
+//        {
+//            Toast.makeText(MainActivity.this,"在一个答案都没选的时候是不能结束的=。=",Toast.LENGTH_SHORT).show();
+//            return;
+//        }
 
         BaseApplication app = MainActivity.this.getBaseApplication();
         OkHttpUtils.get().url(UrlUtils.USER_CREATE)//
@@ -277,14 +279,17 @@ public class MainActivity extends BaseActivity
                         {
                             Toast.makeText(MainActivity.this,"提交失败",Toast.LENGTH_SHORT).show();
                             btnOK.setVisibility(View.VISIBLE);
-                            titleBar.removeAction(action);
-                            action =  new TitleBar.TextAction("重新提交") {
-                                @Override
-                                public void performAction(View view) {
-                                    endProj();
-                                }
-                            };
-                            titleBar.addAction(action);
+
+                            if(action == null)
+                            {
+                                action =  new TitleBar.TextAction("重新提交") {
+                                    @Override
+                                    public void performAction(View view) {
+                                        endProj();
+                                    }
+                                };
+                                titleBar.addAction(action);
+                            }
                         }
                         @Override
                         public void onResponse(String response, int id) {
@@ -300,14 +305,16 @@ public class MainActivity extends BaseActivity
                             {
                                 Toast.makeText(MainActivity.this,"提交失败",Toast.LENGTH_SHORT).show();
                                 btnOK.setVisibility(View.VISIBLE);
-                                titleBar.removeAction(action);
-                                action =  new TitleBar.TextAction("重新提交") {
-                                    @Override
-                                    public void performAction(View view) {
-                                        endProj();
-                                    }
-                                };
-                                titleBar.addAction(action);
+                                if(action == null)
+                                {
+                                    action =  new TitleBar.TextAction("重新提交") {
+                                        @Override
+                                        public void performAction(View view) {
+                                            endProj();
+                                        }
+                                    };
+                                    titleBar.addAction(action);
+                                }
                             }
                         }
                     });
